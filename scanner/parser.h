@@ -4,7 +4,6 @@ int fileno(FILE *);
 
 /* These definitions might have been specified as %token for Bison */
 
-
 #define EQUAL 258 //
 #define DIFFERENT 259 //
 #define LESS 260 //
