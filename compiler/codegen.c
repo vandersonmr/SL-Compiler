@@ -3,6 +3,8 @@
 #include <string.h>
 #include "slc.h"
 
+int labelGen = 1;
+
 int stackHeight() {
   return 1;
 }
@@ -15,14 +17,20 @@ void processAdditiveLoop(List* additiveLoop) {
 
 void processFactor(TreeNode* factor) {
   switch (factor->node_type) {
-    case 18:
-      printf("\tLDCT %d\n", factor->value);
-      break;
-    case 21:
+  case 18:
+    printf("      LDCT   %d\n", factor->value);
+    break;
+  case 21:
+    if (strcmp(factor->name, "true") == 0) {
+      printf("      LDCT   1\n");
+    } else if (strcmp(factor->name, "false") == 0) {
+      printf("      LDCT   0\n");
+    } else {
       if (findSymbol(factor->name) == NULL) SemanticError("Variable doesn't exist!\n");
       Symbol* sym = findSymbol(factor->name);
-      printf("\tLDVL   %d,%d\n", sym->level, sym->addr);
-      break;
+      printf("      LDVL   %d,%d\n", sym->level, sym->addr);
+    }
+    break;
   }
 }
 
@@ -48,25 +56,103 @@ void processSimpleExp(TreeNode* exp) {
     processAdditiveLoop(additiveLoop);
 }
 
+void processExp(TreeNode* exp) {
+  switch (exp->node_type) {
+  case 28:
+    processSimpleExp(exp);
+    break;
+  }
+}
+
 void processExps(List* exps) {
   unsigned size = getListSize(exps);
   for (unsigned i = 0; i < size; i++) {
     TreeNode* exp = getFromList(exps, i);
-    if (exp != NULL) {
-      switch (exp->node_type) {
-        case 28:
-          processSimpleExp(exp);
-          break;
-      }
-    }
+    if (exp != NULL)
+      processExp(exp);
   }
 }
 
 void processCall(TreeNode* call) {
   char* name = call->name;
-  processExps(getChild(call, 0));
   if (strcmp(name, "write") == 0) {
-    printf("\tPRNT\n");
+    List* exps = getChild(call, 0);
+    unsigned size = getListSize(exps);
+    for (unsigned i = 0; i < size; i++) {
+      TreeNode* exp = getFromList(exps, i);
+      if (exp != NULL) {
+        processExp(exp);
+        printf("      PRNT\n");
+      }
+    }
+    return;
+  }
+  else if (strcmp(name, "read") == 0) {
+    List* exps = getChild(call, 0);
+    unsigned size = getListSize(exps);
+    for (unsigned i = 0; i < size; i++) {
+      TreeNode* exp = getFromList(exps, i);
+      if (exp != NULL) {
+        printf("      READ\n");
+        TreeNode* varName = getChild(getChild(exp, 0), 0);
+        Symbol* sym = findSymbol(varName->name);
+        if (sym == NULL) SemanticError("Didn't find symbol to assign\n");
+        printf("      STVL   %d,%d\n", sym->level, sym->addr);
+      }
+    }
+    return;
+  }
+
+}
+
+void processAssignment(TreeNode* assign) {
+  processExp(getChild(assign, 1));
+  TreeNode* varName = getChild(assign, 0);
+  Symbol* sym = findSymbol(varName->name);
+  if (sym == NULL) SemanticError("Didn't find symbol to assign\n");
+  printf("      STVL   %d,%d\n", sym->level, sym->addr);
+}
+
+void processStatement(TreeNode*);
+
+void processLabeledStatement(TreeNode* stm) {
+  Symbol* sym = findSymbol(stm->name);
+  if (sym == NULL) {
+    sym = insertSymbol(stm->name, "label");
+    sym->addr = labelGen;
+    labelGen++;
+  }
+  printf("L%d:   ENLB   %d,%d\n", sym->addr, sym->level, 0);
+  if (getChild(stm, 0) != NULL)
+    processStatement((TreeNode*) getChild(stm, 0));
+}
+
+void processGoto(TreeNode* g) {
+  Symbol* sym = findSymbol(g->name);
+  if (sym == NULL) {
+    sym = insertSymbol(g->name, "label");
+    sym->addr = labelGen;
+    labelGen++;
+  }
+  if (strcmp(sym->type->label, "label") != 0) SemanticError("Trying to goto to not a label\n");
+
+  printf("      JUMP   L%d\n", sym->addr);
+}
+
+void processStatement(TreeNode* stm) {
+  switch(stm->node_type) {
+  case 6:
+    processCall(stm);
+    break;
+  case 16:
+    processAssignment(stm);
+    break;
+  case 13:
+    processGoto(stm);
+    break;
+  case 27:
+    processLabeledStatement(stm);
+    break;
   }
 }
 
@@ -74,13 +160,8 @@ void processStatementLoop(List* stms) {
   unsigned size = getListSize(stms);
   for (unsigned i = 0; i < size; i++) {
     TreeNode* stm = getFromList(stms, i);
-    if (stm != NULL) {
-      switch(stm->node_type) {
-        case 6:
-          processCall(stm);
-          break;
-      }
-    }
+    if (stm != NULL)
+      processStatement(stm);
   }
 }
 
@@ -101,7 +182,7 @@ void allocVars(List* vars) {
     totalToAlloc += getListSize(indenList);
   }
 
-  printf("\tALOC %u\n", totalToAlloc);
+  printf("      ALOC   %u\n", totalToAlloc);
 }
 
 void dellocVars(List* vars) {
@@ -115,7 +196,7 @@ void dellocVars(List* vars) {
     totalToAlloc += getListSize(indenList);
   }
 
-  printf("\tDLOC %u\n", totalToAlloc);
+  printf("      DLOC   %u\n", totalToAlloc);
 }
 
 void processBlock(TreeNode* block) {
@@ -148,6 +229,7 @@ void processFunction(TreeNode* function) {
   if (level == 0) {
     insertType("integer", 1);
     insertType("boolean", 1);
+    insertType("label", 0);
   }
 
   switch (function->node_type) {
@@ -161,8 +243,8 @@ void processFunction(TreeNode* function) {
 }
 
 void processProgram(void* tree) {
-  printf("\tMAIN\n");
+  printf("      MAIN\n");
   processFunction(getChild(tree, 0));
-  printf("\tSTOP\n");
-  printf("\tEND\n");
+  printf("      STOP\n");
+  printf("      END\n");
 }

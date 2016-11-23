@@ -58,7 +58,7 @@ else      return ELSE;
 "("  return OPEN_PAREN;
 ";"  return SEMI_COLON;
 
-"integer"|"boolean"|"true"|"false"|"read"|"write"|[a-zA-Z]+[a-zA-Z0-9]* {
+"true"|"false"|"integer"|"boolean"|"read"|"write"|[a-zA-Z]+[a-zA-Z0-9]* {
   yylval.strval = malloc(strlen(yytext));
   strcpy(yylval.strval, yytext);
   return IDENTIFIER;

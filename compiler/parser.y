@@ -127,7 +127,7 @@ function_parameter: IDENTIFIER IDENTIFIER formal_parameters
                     $$ = createFuncParamNode(0, $2, $3);
                   };
 
-statement: IDENTIFIER COLON unlabeled_statement 
+statement: IDENTIFIER COLON unlabeled_statement
          {
           $$ = createLabeledStatementNode($1, $3);
          }

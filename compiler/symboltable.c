@@ -9,7 +9,7 @@ List* symbol_stack[MAX_STACK_SIZE];
 
 int increaseStackSize() {
   level += 1;
-  printf("level: %d\n", level);
+//  printf("level: %d\n", level);
   types_stack[level] = allocList(NULL, 0);
   symbol_stack[level] = allocList(NULL, 0);
   return level;
@@ -41,7 +41,7 @@ Symbol* insertSymbol(char* label, char* type) {
   sym->type = findType(type);
   if (sym->type == NULL)  SemanticError("Didn't find a type\n");
   insertIntoList(symbol_stack[level], sym, 0);
-  printf("inserting symbol: %s : %s at level %d and addr %u\n", sym->label, sym->type->label, sym->level, sym->addr);
+//  printf("inserting symbol: %s : %s at level %d and addr %u\n", sym->label, sym->type->label, sym->level, sym->addr);
   return sym;
 }
 
@@ -52,7 +52,7 @@ Symbol* findSymbol(char* label) {
       Symbol* sym = getFromList(symbol_stack[l], i);
       if (sym == NULL) continue;
       if (strcmp(sym->label, label) == 0) {
-        printf("variable %s : %s found in level %d at %u\n", sym->label, sym->type->label, sym->level, sym->addr);
+//        printf("variable %s : %s found in level %d at %u\n", sym->label, sym->type->label, sym->level, sym->addr);
         return sym;
       }
     }
@@ -61,7 +61,7 @@ Symbol* findSymbol(char* label) {
 }
 
 Type* insertType(char* label, unsigned size) {
-  printf("inserting type: %s with size: %u at level %d\n", label, size, level);
+//  printf("inserting type: %s with size: %u at level %d\n", label, size, level);
   Type* type = malloc(sizeof(Type));
   type->label = malloc(strlen(label));
   strcpy(type->label, label);
