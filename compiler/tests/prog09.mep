@@ -1,0 +1,19 @@
+      MAIN
+      ALOC   3
+      READ
+      STVL   0,0
+      READ
+      STVL   0,1
+      LDVL   0,0
+      STVL   0,2
+      LDVL   0,1
+      STVL   0,0
+      LDVL   0,2
+      STVL   0,1
+      LDVL   0,0
+      PRNT
+      LDVL   0,1
+      PRNT
+      DLOC   3
+      STOP
+      END 

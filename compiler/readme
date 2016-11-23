@@ -1,0 +1,57 @@
+A Compiler for SL — Simple Language
+The purpose of this task is the implementation of a compiler for SL programs, following suggestions presented in class. At least six files should be submitted:
+
+scanner.l
+parser.y
+tree.c
+tree.h
+codegen.c
+codegen.h 
+
+The first four files can be almost identical to the ones from the previous tasks, with minor adaptations whenever necessary. The other files should implement MEPA code generating functions. Up to four additional .c and/or .h files may be submitted; they will be included in the compilation process (*.c).
+
+Your implementation will be tested by the program slc.c which is provided (with slc.h). Notice that slc.c will import the submitted file codegen.h; the minimum requirement for this file is to include the definitions:
+
+void processProgram(void *p);
+int stackHeight();
+
+These two functions should be implemented in one of your .c files. Function processProgram(void *p) should generate a complete MEPA code from the program tree pointed to by the argument p; its type can be declared void because the test program does not need to know the details of the tree structures. MEPA code should be written to the standard output file. The purpose of the function stackHeight() should be obvious.
+
+The submission will be processed by the following sequence of Linux commands:
+
+bison -d -o parser.c parser.y
+flex -i -o scanner.c  scanner.l
+gcc -std=c99 -pedantic -o slc *.c
+for each test NN:
+slc  < progNN.sl > progNN.mep
+mepa --limit 12000 --progfile progNN.mep < dataNN.in > progNN.res
+
+(Mepa will be invoked only if the compiler slc did not detect any errors.)
+
+  Your program should detect lexical, syntactical and semantic errors, using "panic" mode, i.e. a simple error message should be printed and execution aborted with exit code 0. File slc.c provides two error messaging functions to be used in an obvious way. Notice that these messages will be written into the same file which contains already a (partial) MEPA translation.
+
+  There are 35 test files named prog00.sl to prog34.sl covering:
+
+  basic (mandatory) part of SL: tests 00 to 28
+  type declarations and arrays: tests 29 to 31
+  functions as parameters: tests 32 and 33
+  functions as parameters and arrays: test 34 
+
+  (Tests 23 to 28 should produce error messages at the end of their .mep files.) The desired option should be chosen for submission. Notice that the test cases not covered will be marked as correct because of the way the system works.
+
+  Remarks:
+
+  File all.zip (see auxiliary files) provides the test program mentioned above as well as the test files and their results.
+  Mepa files produced by the compiler do not have to be identical but their execution (when correct) should produce identical results.
+  Maximum number of submissions is 20 — test your solutions exhaustively before submission!
+  Due to the number of tests and the processing required for each of them, the results of each submission may take up to 30 seconds or even more, depending on the current load of the SuSy system.
+  Final submission date: December 9th (Friday)
+  All submissions will also be checked manually, eventually in the presence of the author so that minor programming errors can be accepted. However, in order to have enough time for this evaluation in author's presence, the compiler must be submitted until December 5th.
+  This task contributes to the final project grade as follows:
+  40% for the implementation of the basic part of SL
+  50% for the implementation of the basic part of SL and functions as parameters
+  50% for the implementation of the basic part of SL and type declarations and arrays
+  60% for the complete implementation of SL. 
+  A complete copy of the Mepa interpreter is provided for download on course's page. See Mepa description for usage instructions. 
+
+

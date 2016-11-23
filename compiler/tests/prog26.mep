@@ -1,0 +1,7 @@
+      MAIN
+      ALOC   2
+      READ
+      STVL   0,0
+      READ
+      STVL   0,1
+Semantic error.

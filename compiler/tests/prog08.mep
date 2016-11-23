@@ -1,0 +1,7 @@
+      MAIN
+      LDCT   0
+      PRNT
+      JUMP   L1         goto l100
+L1:   ENLB   0,0        l100:
+      STOP
+      END 

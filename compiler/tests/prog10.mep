@@ -1,0 +1,15 @@
+      MAIN
+      ALOC   2
+      LDCT   5
+      STVL   0,0
+      LDVL   0,0
+      LDCT   1
+      ADDD
+      STVL   0,1
+      LDVL   0,0
+      PRNT
+      LDVL   0,1
+      PRNT
+      DLOC   2
+      STOP
+      END 

@@ -1,0 +1,14 @@
+      MAIN
+      ALOC   3
+      READ
+      STVL   0,0
+      READ
+      STVL   0,1
+      READ
+      STVL   0,2
+      LDVL   0,0
+      LDVL   0,1
+      EQUA
+      LDVL   0,2
+      ADDD
+Semantic error.
