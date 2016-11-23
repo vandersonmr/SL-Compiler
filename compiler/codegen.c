@@ -1,7 +1,7 @@
 #include "codegen.h"
-#include "tree.h"
 #include <stdio.h>
 #include <string.h>
+#include "slc.h"
 
 int stackHeight() {
   return 1;
@@ -17,6 +17,11 @@ void processFactor(TreeNode* factor) {
   switch (factor->node_type) {
     case 18:
       printf("\tLDCT %d\n", factor->value);
+      break;
+    case 21:
+      if (findSymbol(factor->name) == NULL) SemanticError("Variable doesn't exist!\n");
+      Symbol* sym = findSymbol(factor->name);
+      printf("\tLDVL   %d,%d\n", sym->level, sym->addr);
       break;
   }
 }
@@ -60,7 +65,7 @@ void processExps(List* exps) {
 void processCall(TreeNode* call) {
   char* name = call->name;
   processExps(getChild(call, 0));
-  if (strcpy(name, "write") != 0) {
+  if (strcmp(name, "write") == 0) {
     printf("\tPRNT\n");
   }
 }
@@ -86,6 +91,12 @@ void allocVars(List* vars) {
     TreeNode* var = getFromList(vars, i);
     List* indenList = getChild(var, 0);
     TreeNode* type = getChild(var, 1);
+
+    unsigned idenSize = getListSize(indenList);
+    for (unsigned j = 0; j < idenSize; j++) {
+      TreeNode* iden = getFromList(indenList, j);
+      insertSymbol(iden->name, type->name);
+    }
 
     totalToAlloc += getListSize(indenList);
   }
@@ -133,12 +144,20 @@ void processFuncDeclaration(TreeNode* funDeclaration) {
 }
 
 void processFunction(TreeNode* function) {
-  switch (function->node_type) {
-    case 1:
-      processFuncDeclaration(getChild(function, 0));
-      break;
-      //TODO: Not void function
+  int level = increaseStackSize();
+  if (level == 0) {
+    insertType("integer", 1);
+    insertType("boolean", 1);
   }
+
+  switch (function->node_type) {
+  case 1:
+    processFuncDeclaration(getChild(function, 0));
+    break;
+    //TODO: Not void function
+  }
+
+  decreaseStackSize();
 }
 
 void processProgram(void* tree) {

@@ -1,5 +1,5 @@
-#ifndef TREE_H
-#define TREE_H
+#ifndef TREE_INCLUDED
+#define TREE_INCLUDED
 
 #include <stdlib.h>
 #include "list.h"

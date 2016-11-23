@@ -1,5 +1,8 @@
-#ifndef CODEGEN_H
-#define CODEGEN_H
+#ifndef CODEGEN_INCLUDED
+#define CODEGEN_INCLUDED
+
+#include "tree.h"
+#include "symboltable.h"
 
 /*
  * Types:

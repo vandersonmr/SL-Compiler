@@ -21,6 +21,7 @@ extern char *yytext;
 
 void SemanticError(char *s) {
   printf("Semantic error.\n");
+  printf("%s", s);
   exit(0);
 }
 
