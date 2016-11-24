@@ -100,8 +100,7 @@ void setName(TreeNode* node, char* name) {
 }
 
 void setType(TreeNode* node, char* name) {
-  node->type = malloc(strlen(name));
-  strcpy(name, node->type);
+  node->type = name;
 }
 
 #define ListTy 1

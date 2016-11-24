@@ -20,6 +20,7 @@ struct Symbol_t {
 
 #define MAX_STACK_SIZE 20
 
+int stackHeight();
 int getNextAddrs();
 int increaseStackSize();
 int decreaseStackSize();

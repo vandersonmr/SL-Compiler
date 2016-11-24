@@ -3,9 +3,17 @@
 #include <stdlib.h>
 #include "slc.h"
 
-int level = -1;
 List* types_stack[MAX_STACK_SIZE];
 List* symbol_stack[MAX_STACK_SIZE];
+
+int level = -1;
+
+int stackHeight() {
+  if (level == -1)
+    return 1;
+  else 
+    return level + 1;
+}
 
 int increaseStackSize() {
   level += 1;
@@ -41,7 +49,7 @@ Symbol* insertSymbol(char* label, char* type) {
   sym->type = findType(type);
   if (sym->type == NULL)  SemanticError("Didn't find a type\n");
   insertIntoList(symbol_stack[level], sym, 0);
-//  printf("inserting symbol: %s : %s at level %d and addr %u\n", sym->label, sym->type->label, sym->level, sym->addr);
+  //printf("inserting symbol: %s : %s at level %d and addr %u\n", sym->label, sym->type->label, sym->level, sym->addr);
   return sym;
 }
 

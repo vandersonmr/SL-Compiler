@@ -34,19 +34,23 @@ if        return IF;
 while     return WHILE;
 else      return ELSE;
 
-"==" return EQUAL;
-"="  return ASSIGN;
-"!=" return DIFFERENT;
-"<=" return LESS_OR_EQUAL;
-"<"  return LESS;
-">=" return GREATER_OR_EQUAL;
-">"  return GREATER;
-"+"  return PLUS;
-"-"  return MINUS;
-"*"  return MULTIPLY;
-"/"  return DIV;
-"&&" return AND;
-"||" return OR;
+"="  return ASSIGN; 
+
+"==" { yylval.intval = '='; return EQUAL; }
+"!=" { yylval.intval = '#'; return DIFFERENT; }
+"<=" { yylval.intval = '('; return LESS_OR_EQUAL; }
+"<"  { yylval.intval = '<'; return LESS; }
+">=" { yylval.intval = ')'; return GREATER_OR_EQUAL; }
+">"  { yylval.intval = '>'; return GREATER; }
+
+"+"  { yylval.intval = '+'; return PLUS; };
+"-"  { yylval.intval = '-'; return MINUS; };
+
+"*"  { yylval.intval = '*'; return MULTIPLY; };
+"/"  { yylval.intval = '/'; return DIV; }
+
+"&&" { yylval.intval = '&'; return AND; }
+"||" { yylval.intval = '|'; return OR; }
 "}"  return CLOSE_BRACE;
 "]"  return CLOSE_BRACKET;
 ")"  return CLOSE_PAREN;

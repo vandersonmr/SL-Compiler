@@ -174,7 +174,7 @@ unlabeled_statementLoop: unlabeled_statement { $$ = createUnlabeledStmList($1); 
                         $$ = $1;
                        }
 
-conditional: IF OPEN_PAREN expression CLOSE_PAREN compound 
+conditional: IF OPEN_PAREN expression CLOSE_PAREN compound
            {
             $$ = createIfNode($3, $5);
            }
